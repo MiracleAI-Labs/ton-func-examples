@@ -2,14 +2,14 @@ import { Address, beginCell } from "@ton/core";
 import { Mai3Contract } from "../libs/Mai3Contract";
 import { Network } from "@orbs-network/ton-access";
 
+const network = (process.env.NETWORK || "testnet") as Network;
+const mnemonic = process.env.MNEMONIC || "";
+
 export class Counter extends Mai3Contract {
 
     async deploy() {    
         const files = ["contracts/Counter.fc"];
         const data = beginCell().storeUint(100, 64).endCell();
-
-        const network = (process.env.NETWORK || "testnet") as Network;
-        const mnemonic = process.env.MNEMONIC || "";
 
         console.log("Deploying contract...");
         console.log("Network: ", network);

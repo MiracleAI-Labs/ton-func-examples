@@ -3,6 +3,7 @@ import { Address } from '@ton/core';
 import { BaseContract, DeployContractParams, InvokeContractParams } from "./BaseContract";
 import { Network } from '@orbs-network/ton-access';
 
+/** create by MiracleAI (mai3.io) */
 export class Mai3Contract {
 
     async deployContract(deployParams: DeployContractParams) {    

@@ -1,8 +1,7 @@
 import * as dotenv from 'dotenv';
-import { Counter } from "./Counter";
-
-// 加载 .env 文件中的变量到 process.env
 dotenv.config();
+
+import { Counter } from "./Counter";
 
 async function runScripts() {
     const counter = new Counter();
