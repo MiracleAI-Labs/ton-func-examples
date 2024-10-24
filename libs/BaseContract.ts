@@ -87,19 +87,25 @@ export class BaseContract implements Contract {
     static async deployContract(deployParams: DeployContractParams) {    
         const contractCode = await BaseContract.getContractCode(deployParams.files);    
         if (!contractCode) {        
-            console.error("无法获取合约代码");
+            console.error("Unable to get contract code");
             return;    
         }
 
         const deployContract = BaseContract.createFromData(contractCode, deployParams.data);    
-        console.log("合约地址: ", deployContract.address);
+        console.log("Contract address: ", deployContract.address);
+
+        const isDeployed = await this.isDeployed(deployContract.address, deployParams.network);
+        if (isDeployed) {
+            console.log("Contract already deployed");
+            return deployContract.address;
+        }
 
         const { tonClient, sender } = await BaseContract.setupWallet(deployParams.mnemonic, deployParams.network);
 
         const openDeployContract = tonClient.open(deployContract);
         await openDeployContract.sendDeploy(sender, toNano(0.1));
 
-        console.log("合约部署成功");
+        console.log("Contract deployed successfully");
 
         return deployContract.address;
     }
@@ -112,8 +118,16 @@ export class BaseContract implements Contract {
         const openContract = tonClient.open(contract);
         await openContract.sendInvoke(sender, toNano(0.1), args.body);
 
-        console.log("合约调用成功");
+        console.log("Contract invoked successfully");
 
         return contract.address;
+    }
+
+    static async isDeployed(address: Address, network: Network) {    
+        const httpEndpoint = await getHttpEndpoint({ network });
+        const tonClient = new TonClient({ endpoint: httpEndpoint });    
+        const isDeployed = await tonClient.isContractDeployed(address);
+
+        return isDeployed;
     }
 }

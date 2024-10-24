@@ -14,9 +14,11 @@
     "@ton/crypto": "3.3.0",
     "@ton/ton": "15.0.0",
     "buffer": "^6.0.3",
+    "dotenv": "^16.4.5",
     "ton-compiler": "2.3.0"
   },
   "devDependencies": {
+    "@types/node": "^22.7.9",
     "ts-node": "^10.9.2",
     "typescript": "^5.6.3"
   }
