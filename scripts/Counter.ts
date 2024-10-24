@@ -19,9 +19,6 @@ export class Counter extends Mai3Contract {
     }
 
     async setCounter(address: Address, value: number) {
-        const network = (process.env.NETWORK || "testnet") as Network;
-        const mnemonic = process.env.MNEMONIC || "";
-
         const isDeployed = await this.isDeployed(address, network);
         if (!isDeployed) {
             throw new Error("合约未部署");
