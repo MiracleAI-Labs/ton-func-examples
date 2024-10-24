@@ -84,7 +84,7 @@ export class BaseContract implements Contract {
         return { tonClient, sender };
     }
 
-    static async deploy(deployParams: DeployContractParams) {    
+    static async deployContract(deployParams: DeployContractParams) {    
         const contractCode = await BaseContract.getContractCode(deployParams.files);    
         if (!contractCode) {        
             console.error("无法获取合约代码");
@@ -104,7 +104,7 @@ export class BaseContract implements Contract {
         return deployContract.address;
     }
 
-    static async InvokeMethod(args: InvokeContractParams) {    
+    static async invokeMethod(args: InvokeContractParams) {    
         const contract = BaseContract.createFromAddress(args.address);
 
         const { tonClient, sender } = await BaseContract.setupWallet(args.mnemonic, args.network);
