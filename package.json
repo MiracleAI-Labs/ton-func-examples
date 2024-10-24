@@ -1,0 +1,23 @@
+{
+  "name": "first-lesson",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "deploy": "ts-node scripts/runScripts.ts"
+  },
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "@orbs-network/ton-access": "2.3.3",
+    "@ton/core": "0.58.1",
+    "@ton/crypto": "3.3.0",
+    "@ton/ton": "15.0.0",
+    "buffer": "^6.0.3",
+    "ton-compiler": "2.3.0"
+  },
+  "devDependencies": {
+    "ts-node": "^10.9.2",
+    "typescript": "^5.6.3"
+  }
+}

@@ -1,0 +1,47 @@
+#include "../libs/stdlib.fc";
+
+(int) load_data() inline {
+    cell ds = get_data();
+    slice data = ds.begin_parse();
+    return data~load_uint(64);
+}
+
+() save_data(int value) impure inline {
+    set_data(
+        begin_cell()
+        .store_uint(value, 64)
+        .end_cell()
+    );
+}
+
+() recv_internal(int my_balance, int msg_value, cell in_msg_full, slice in_msg_body) impure {
+    slice ds = in_msg_full.begin_parse();
+    int flag = ds~load_uint(4);
+    slice sender_address = ds~load_msg_addr();
+
+    if(in_msg_body.slice_empty?()) {
+        return ();
+    }
+
+    int op = in_msg_body~load_uint(32);
+    int query_id = in_msg_body~load_uint(64);
+
+    if (op == 1) {
+        int value = in_msg_body~load_uint(64);
+        save_data(value);
+        return ();
+    }
+
+    if (op == 2) {
+        int value = load_data();
+        save_data(value + 1);
+        return ();
+    }
+
+    throw(0xffffff);
+}
+
+(int) get_value() method_id {
+    (int value) = load_data();
+    return value;
+}
