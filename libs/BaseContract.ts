@@ -1,3 +1,4 @@
+/** create by MiracleAI (mai3.io) */
 import { getHttpEndpoint, Network } from "@orbs-network/ton-access";
 import { Address, beginCell, Cell, Contract, contractAddress, ContractProvider, fromNano, Sender, SendMode, StateInit, toNano } from "@ton/core";
 import { Maybe } from "@ton/core/dist/utils/maybe";

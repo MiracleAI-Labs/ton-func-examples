@@ -1,3 +1,4 @@
+/** create by MiracleAI (mai3.io) */
 import { Address, beginCell } from "@ton/core";
 import { Mai3Contract } from "../libs/Mai3Contract";
 import { Network } from "@orbs-network/ton-access";

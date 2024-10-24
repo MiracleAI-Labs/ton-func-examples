@@ -1,3 +1,4 @@
+/** create by MiracleAI (mai3.io) */
 import * as dotenv from 'dotenv';
 dotenv.config();
 
