@@ -12,7 +12,9 @@ async function runScripts() {
         throw new Error("Failed to deploy contract");
     }
 
-    await counter.setCounter(address, 101);
+    await counter.setCounter(address, 1002);
+    const counterValue = await counter.getCounter(address);
+    console.log(`Counter value: ${counterValue}`);
 }
 
 runScripts();

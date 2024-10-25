@@ -1,6 +1,6 @@
 /** create by MiracleAI (mai3.io) */
 import { Address } from '@ton/core';
-import { BaseContract, DeployContractParams, InvokeContractParams } from "./BaseContract";
+import { BaseContract, DeployContractParams, SendMessageParams, GetMessageParams } from "./BaseContract";
 import { Network } from '@orbs-network/ton-access';
 
 export class Mai3Contract {
@@ -9,8 +9,12 @@ export class Mai3Contract {
         return await BaseContract.deployContract(deployParams);
     }
 
-    async invokeMethod(invokeParams: InvokeContractParams) {    
-        return await BaseContract.invokeMethod(invokeParams);
+    async sendMessage(params: SendMessageParams) {    
+        return await BaseContract.sendMessage(params);
+    }
+
+    async getMessage(params: GetMessageParams) {    
+        return await BaseContract.getMessage(params);
     }
 
     async isDeployed(address: Address, network: Network) {    

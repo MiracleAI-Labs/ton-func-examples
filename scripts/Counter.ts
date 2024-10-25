@@ -22,11 +22,28 @@ export class Counter extends Mai3Contract {
     async setCounter(address: Address, value: number) {
         const isDeployed = await this.isDeployed(address, network);
         if (!isDeployed) {
-            throw new Error("合约未部署");
+            throw new Error("Contract not deployed");
         }
 
         const body = beginCell().storeUint(1, 32).storeUint(0, 64).storeUint(value, 64).endCell();
 
-        return await this.invokeMethod({address, body, network, mnemonic});
+        return await this.sendMessage({address, body, network, mnemonic});
+    }
+
+    async getCounter(address: Address) {
+        const isDeployed = await this.isDeployed(address, network);
+        if (!isDeployed) {
+            throw new Error("Contract not deployed");
+        }
+
+        const result = await this.getMessage({
+            address, 
+            methodId: "get_value", 
+            args: [], 
+            network, 
+            mnemonic
+        }); 
+
+        return result.stack.readNumber();
     }
 }

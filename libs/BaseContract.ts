@@ -1,6 +1,6 @@
 /** create by MiracleAI (mai3.io) */
 import { getHttpEndpoint, Network } from "@orbs-network/ton-access";
-import { Address, beginCell, Cell, Contract, contractAddress, ContractProvider, fromNano, Sender, SendMode, StateInit, toNano } from "@ton/core";
+import { Address, beginCell, Cell, Contract, contractAddress, ContractGetMethodResult, ContractProvider, fromNano, Sender, SendMode, StateInit, toNano, TupleItem, TupleReader } from "@ton/core";
 import { Maybe } from "@ton/core/dist/utils/maybe";
 import { mnemonicToWalletKey } from "@ton/crypto";
 import { TonClient, WalletContractV4 } from "@ton/ton";
@@ -13,11 +13,19 @@ export interface DeployContractParams {
     mnemonic: string;
 }
 
-export interface InvokeContractParams {
+export interface SendMessageParams {
     address: Address;
     body: Cell;
     network: Network;
     mnemonic: string;
+}
+
+export interface GetMessageParams {
+    address: Address;
+    network: Network;
+    mnemonic: string;
+    methodId: string;
+    args: TupleItem[];
 }
 
 export class BaseContract implements Contract {
@@ -48,13 +56,18 @@ export class BaseContract implements Contract {
         });
     }
 
-    async sendInvoke(provider: ContractProvider, sender: Sender, value: bigint, body: Cell) {
+    async sendCallMethod(provider: ContractProvider, sender: Sender, value: bigint, body: Cell) {
         await provider.internal(sender, {
             value,
             bounce: true,
             sendMode: SendMode.PAY_GAS_SEPARATELY,
             body,
         });
+    }
+
+    async getCallMethod(provider: ContractProvider, methodId: string, args: TupleItem[] = []): Promise<ContractGetMethodResult> {
+        const result = await provider.get(methodId, args);
+        return result;
     }
     
     private static async getContractCode(files: string[]): Promise<Cell | null> {    
@@ -78,9 +91,9 @@ export class BaseContract implements Contract {
         const openWallet = tonClient.open(walletContract);
         const sender = openWallet.sender(keyPair.secretKey);
 
-        console.log("sender: ", openWallet.address);
+        console.log("sender address: ", openWallet.address);
         const balance = await openWallet.getBalance();
-        console.log("balance: ", fromNano(balance));
+        console.log("sender balance: ", fromNano(balance));
 
         return { tonClient, sender };
     }
@@ -111,17 +124,26 @@ export class BaseContract implements Contract {
         return deployContract.address;
     }
 
-    static async invokeMethod(args: InvokeContractParams) {    
+    static async sendMessage(args: SendMessageParams) {    
         const contract = BaseContract.createFromAddress(args.address);
 
         const { tonClient, sender } = await BaseContract.setupWallet(args.mnemonic, args.network);
 
         const openContract = tonClient.open(contract);
-        await openContract.sendInvoke(sender, toNano(0.1), args.body);
-
-        console.log("Contract invoked successfully");
+        await openContract.sendCallMethod(sender, toNano(0.1), args.body);
 
         return contract.address;
+    }
+
+    static async getMessage(args: GetMessageParams) {    
+        const contract = BaseContract.createFromAddress(args.address);
+        const httpEndpoint = await getHttpEndpoint({ network: args.network });
+        const tonClient = new TonClient({ endpoint: httpEndpoint });  
+
+        const openContract = tonClient.open(contract);
+        const result = await openContract.getCallMethod(args.methodId, args.args);
+
+        return result;
     }
 
     static async isDeployed(address: Address, network: Network) {    
